@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    google-site-verification: google74a1e6b1eb015182.html
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبر معلوماتك العامة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@keyframes gradientBG {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+body{font-family:'Cairo',sans-serif;margin:0;padding:0;height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(-45deg,#74ebd5,#ACB6E5,#FF9A9E,#FBC2EB);background-size:400% 400%;animation:gradientBG 15s ease infinite;text-align:center;color:#fff;}
+.container{background: rgba(0,0,0,0.6);padding:40px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,0.3);}
+h1{ margin-bottom:20px;}
+.categories button{display:block;width:200px;margin:10px auto;padding:15px;font-size:18px;border:none;border-radius:12px;cursor:pointer;background:#0077ff;transition:0.3s;}
+.categories button:hover{background:#005ed9;transform:scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>🎓 اختبر معلوماتك العامة</h1>
+<p>مرحبًا، <strong id="usernameDisplay"></strong>! اختر فئة الاختبار:</p>
+
+<div class="categories">
+<button onclick="startQuiz('science')">العلوم</button>
+<button onclick="startQuiz('history')">التاريخ</button>
+<button onclick="startQuiz('sports')">الرياضة</button>
+<button onclick="startQuiz('technology')">التكنولوجيا</button>
+<button onclick="window.location.href='results.html'">سجل النتائج</button>
+<button onclick="logout()">تسجيل الخروج</button>
+</div>
+</div>
+
+<script>
+const currentUser = localStorage.getItem('currentUser');
+if(!currentUser){window.location.href="login.html";}
+document.getElementById('usernameDisplay').textContent=currentUser;
+function startQuiz(category){window.location.href="quiz.html?category="+category;}
+function logout(){localStorage.removeItem('currentUser');window.location.href="login.html";}
+</script>
+
+</body>
+</html>

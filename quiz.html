@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  google-site-verification: google74a1e6b1eb015182.html
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبر معلوماتك العامة - الاختبار</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@keyframes gradientBG {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+body{font-family:'Cairo',sans-serif;margin:0;padding:20px;min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(-45deg,#FFDEE9,#B5FFFC,#FFFCB5,#FFC6FF);background-size:400% 400%;animation:gradientBG 15s ease infinite;color:#333;}
+.quiz-container{background:rgba(255,255,255,0.95);padding:30px;border-radius:25px;max-width:700px;width:90%;box-shadow:0 15px 40px rgba(0,0,0,0.25);animation:fadeIn 1s;}
+h1{color:#0077ff;margin-bottom:20px;text-align:center;}
+.question{font-weight:bold;margin:20px 0 10px 0;font-size:18px;}
+.answers label{display:block;background:#eef2ff;padding:15px;margin:10px 0;border-radius:15px;cursor:pointer;transition:0.3s;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.answers label:hover{background:#dce6ff;transform:scale(1.03);}
+.correct{background:#c6f6d5 !important;box-shadow:0 0 10px #28a745;}
+.wrong{background:#feb2b2 !important;box-shadow:0 0 10px #e53e3e;}
+button{background:#0077ff;color:white;padding:12px 25px;border:none;border-radius:15px;margin-top:20px;cursor:pointer;transition:0.3s;font-size:16px;display:block;margin:auto;}
+button:hover{background:#005ed9;transform:scale(1.05);}
+#result{margin-top:20px;font-size:1.3em;font-weight:bold;text-align:center;}
+.progress-container{background:#eee;border-radius:20px;margin-top:20px;height:20px;width:100%;overflow:hidden;}
+.progress-bar{height:100%;width:0%;background:#0077ff;border-radius:20px;transition:width 0.5s;}
+.timer{font-size:18px;font-weight:bold;color:#ff4500;text-align:center;margin-bottom:15px;}
+@keyframes fadeIn{0%{opacity:0;}100%{opacity:1;}}
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+<h1 id="quizTitle">🎓 الاختبار</h1>
+<div class="timer" id="timer">⏰ 15 ثانية متبقية</div>
+<form id="quizForm"></form>
+<button id="submitBtn" onclick="checkAnswers()">عرض النتيجة</button>
+<div class="progress-container">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+<div id="result"></div>
+</div>
+
+<script>
+const currentUser = localStorage.getItem('currentUser');
+if(!currentUser){window.location.href="login.html";}
+
+const urlParams = new URLSearchParams(window.location.search);
+const category = urlParams.get('category')||'science';
+document.getElementById('quizTitle').textContent=`🎓 الاختبار - ${category}`;
+
+const questionsData = {
+  science:[{q:"ما هو أكبر كوكب؟",options:["الأرض","المشتري","زحل"],answer:1},{q:"رمز الهيدروجين؟",options:["H","He","Fe"],answer:0}],
+  history:[{q:"أول رئيس للولايات المتحدة؟",options:["جورج واشنطن","لينكولن","توماس جيفرسون"],answer:0},{q:"بداية الحرب العالمية الثانية؟",options:["1939","1914","1945"],answer:0}],
+  sports:[{q:"عدد لاعبي كرة القدم؟",options:["11","9","10"],answer:0},{q:"فائز كأس العالم 2018؟",options:["ألمانيا","فرنسا","البرازيل"],answer:1}],
+  technology:[{q:"معنى AI؟",options:["Artificial Intelligence","Automatic Input","Applied Innovation"],answer:0},{q:"أكثر نظام تشغيل للهواتف؟",options:["Android","iOS","Windows Phone"],answer:0}]
+};
+
+const quizForm=document.getElementById('quizForm');
+const currentQuestions=questionsData[category];
+
+let timePerQuestion = 15; // 15 ثانية لكل سؤال
+let currentQuestionIndex = 0;
+let score = 0;
+
+function showQuestion(index){
+  if(index >= currentQuestions.length){
+    finishQuiz();
+    return;
+  }
+  quizForm.innerHTML = '';
+  const question = currentQuestions[index];
+  const divQ = document.createElement('div'); divQ.classList.add('question'); divQ.textContent=`${index+1}. ${question.q}`; quizForm.appendChild(divQ);
+  const divA = document.createElement('div'); divA.classList.add('answers');
+  question.options.forEach((opt,i)=>{
+    const label = document.createElement('label'); 
+    label.innerHTML=`<input type="radio" name="q" value="${i}"> ${opt}`;
+    label.onclick = ()=>{ checkAnswer(i, question.answer, label); };
+    divA.appendChild(label);
+  });
+  quizForm.appendChild(divA);
+  startTimer();
+}
+
+function startTimer(){
+  let time = timePerQuestion;
+  const timerEl = document.getElementById('timer');
+  timerEl.textContent = `⏰ ${time} ثانية متبقية`;
+  const timerInterval = setInterval(()=>{
+    time--;
+    timerEl.textContent = `⏰ ${time} ثانية متبقية`;
+    if(time<=0){
+      clearInterval(timerInterval);
+      currentQuestionIndex++;
+      showQuestion(currentQuestionIndex);
+    }
+  },1000);
+}
+
+function checkAnswer(selected, correct, label){
+  if(selected===correct){label.classList.add('correct'); score++;}
+  else{label.classList.add('wrong');}
+  currentQuestionIndex++;
+  setTimeout(()=>showQuestion(currentQuestionIndex),800);
+}
+
+function finishQuiz(){
+  // حفظ النتيجة
+  const users = JSON.parse(localStorage.getItem('user_'+currentUser));
+  if(users){
+    users.scores.push({category: category, score: score, date: new Date().toLocaleString()});
+    localStorage.setItem('user_'+currentUser, JSON.stringify(users));
+  }
+  // الانتقال مباشرة إلى صفحة النتائج
+  window.location.href = "results.html";
+}
+
+
+showQuestion(currentQuestionIndex);
+</script>
+
+</body>
+</html>

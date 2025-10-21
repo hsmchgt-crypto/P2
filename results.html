@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    google-site-verification: google74a1e6b1eb015182.html
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سجل النتائج - اختبر معلوماتك العامة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@keyframes gradientBG{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+body{font-family:'Cairo',sans-serif;margin:0;padding:20px;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;background:linear-gradient(-45deg,#74ebd5,#ACB6E5,#FF9A9E,#FBC2EB);background-size:400% 400%;animation:gradientBG 15s ease infinite;color:#333;}
+.container{background: rgba(255,255,255,0.95);padding:30px;border-radius:20px;max-width:700px;width:90%;box-shadow:0 10px 25px rgba(0,0,0,0.2);}
+h1{color:#0077ff;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:12px;text-align:center;border-bottom:1px solid #ddd;}
+th{background:#0077ff;color:white;border-radius:10px;}
+button{margin-top:20px;padding:12px 25px;border:none;border-radius:12px;background:#0077ff;color:white;cursor:pointer;transition:0.3s;}
+button:hover{background:#005ed9;transform:scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>📊 سجل نتائجك</h1>
+<table id="resultsTable">
+<tr><th>الفئة</th><th>الدرجة</th><th>التاريخ</th></tr>
+</table>
+<button onclick="goHome()">العودة للصفحة الرئيسية</button>
+<button onclick="logout()">تسجيل الخروج</button>
+</div>
+
+<script>
+const currentUser=localStorage.getItem('currentUser');
+if(!currentUser){window.location.href="login.html";}
+const users=JSON.parse(localStorage.getItem('user_'+currentUser));
+const table=document.getElementById('resultsTable');
+if(users && users.scores.length>0){
+users.scores.forEach(item=>{
+const row=table.insertRow();
+const cell1=row.insertCell(0);const cell2=row.insertCell(1);const cell3=row.insertCell(2);
+cell1.textContent=item.category;cell2.textContent=item.score;cell3.textContent=item.date;
+});
+}else{
+const row=table.insertRow();const cell=row.insertCell(0);cell.colSpan=3;cell.textContent="لا توجد نتائج حتى الآن";
+}
+function goHome(){window.location.href="index.html";}
+function logout(){localStorage.removeItem('currentUser');window.location.href="login.html";}
+</script>
+
+</body>
+</html>
